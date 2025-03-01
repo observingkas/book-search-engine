@@ -5,7 +5,6 @@ import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import db from "./config/connection.js";
 import { typeDefs, resolvers } from "./schemas";
-import { authMiddleware } from "./services/auth";
 
 //Create a new express server and define port
 const PORT = process.env.PORT || 3001;
