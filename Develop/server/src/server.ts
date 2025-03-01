@@ -4,7 +4,7 @@ import path from "node:path";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import db from "./config/connection.js";
-import { typeDefs, resolvers } from "./schemas";
+import { typeDefs, resolvers } from "./schemas/index.js";
 
 //Create a new express server and define port
 const PORT = process.env.PORT || 3001;
@@ -27,8 +27,8 @@ const startApolloServer = () => {
       "/graphql",
       expressMiddleware(server, {
         context: async ({ req }) => ({
-          user: req.user
-        })
+          user: req.user,
+        }),
       })
     );
 
