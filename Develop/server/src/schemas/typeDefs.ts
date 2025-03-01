@@ -3,7 +3,7 @@
 import { gql } from "apollo-server-express";
 
 //Define GraphQL schema using gql
-const typeDefs = `
+const typeDefs = gql`
 # User type defines the fields for user data
 type User {
     _id: ID!
