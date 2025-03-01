@@ -1,6 +1,14 @@
 import { AuthenticationError } from "apollo-server-express";
-import { User } from "../models";
-import { signToken } from "../utils./auth";
+import User from "../models/User";
+import { signToken } from "../services/auth";
+
+interface Context {
+  user?: any;
+}
+
+interface BookData {
+  bookId: string;
+}
 
 //Define resolvers for GraphQL operations
 const resolvers = {
