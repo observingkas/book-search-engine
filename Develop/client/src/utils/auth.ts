@@ -1,7 +1,6 @@
 // Import dependencies
 import { jwtDecode } from "jwt-decode";
 import { GraphQLError } from "graphql";
-import jwt from "jsonwebtoken";
 
 //Define authentication configuration
 const secret = "mysecretsshhhhh";
