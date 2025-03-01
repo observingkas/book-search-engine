@@ -3,11 +3,20 @@ import User from "../models/User";
 import { signToken } from "../services/auth";
 
 interface Context {
-  user?: any;
+  user?: {
+    _id: string;
+    username: string;
+    email: string;
+  };
 }
 
 interface BookData {
   bookId: string;
+  authors: string[];
+  description: string;
+  title: string;
+  image: string;
+  link: string;
 }
 
 //Define resolvers for GraphQL operations
@@ -15,7 +24,7 @@ const resolvers = {
   //Query resolvers
   Query: {
     //Get logged in user's data
-    me: (parent, args, context) => {
+    me: (_parent: unknown, _args: unknown, context: Context) => {
       if (context.user) {
         return User.findOne({ _id: context.user._id })
           .select("-password")
@@ -28,7 +37,10 @@ const resolvers = {
   //Mutation resolvers
   Mutation: {
     //Handler user login
-    login: (parent, { email, password }) => {
+    login: (
+      _parent: unknown,
+      { email, password }: { email: string; password: string }
+    ) => {
       return User.findOne({ email }).then((user) => {
         if (!user) {
           throw new AuthenticationError(
@@ -39,22 +51,33 @@ const resolvers = {
           if (!correctPw) {
             throw new AuthenticationError("Incorrect credentials");
           }
-          const token = signToken(user);
+          const token = signToken(user.username, user.email, user._id);
           return { token, user };
         });
       });
     },
 
     //Create a new user account
-    addUser: (parent, { username, email, password }) => {
+    addUser: (
+      _parent: unknown,
+      {
+        username,
+        email,
+        password,
+      }: { username: string; email: string; password: string }
+    ) => {
       return User.create({ username, email, password }).then((user) => {
-        const token = signToken(user);
+        const token = signToken(user.username, user.email, user._id);
         return { token, user };
       });
     },
 
     //Save a new book to user's account
-    saveBook: (parent, { bookData }, context) => {
+    saveBook: (
+      _parent: unknown,
+      { bookData }: { bookData: BookData },
+      context: Context
+    ) => {
       if (context.user) {
         return User.findOneAndUpdate(
           { _id: context.user._id },
@@ -66,7 +89,11 @@ const resolvers = {
     },
 
     //Remove a book from user's saved books
-    removeBook: (parent, { bookId }, context) => {
+    removeBook: (
+      _parent: unknown,
+      { bookId }: { bookId: string },
+      context: Context
+    ) => {
       if (context.user) {
         return User.findOneAndUpdate(
           { _id: context.user._id },
