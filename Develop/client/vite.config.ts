@@ -7,14 +7,15 @@ console.log("Build output directory:", process.cwd());
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: "dist",
+    outDir: "dist", // Make sure this is relative to the root folder.
     rollupOptions: {
       external: ["@apollo/client"],
       output: {
-        dir: process.env.VITE_OUT_DIR || "dist",
+        dir: "dist", // Make sure this matches the `outDir` setting.
       },
     },
   },
+
   server: {
     port: 3000,
     open: true,
