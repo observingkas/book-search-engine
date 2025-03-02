@@ -1,5 +1,5 @@
 import { AuthenticationError } from "apollo-server-express";
-import User from "../models/User";
+import User from "../models/User.js";
 import { signToken } from "../services/auth";
 
 interface Context {
