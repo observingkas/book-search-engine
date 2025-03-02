@@ -13,7 +13,7 @@ type User {
     savedBooks: [Book]
 }
     
-//Book type defines the structure for book data
+#Book type defines the structure for book data
 type Book {
     bookId: String!
     authors: [String]
@@ -22,7 +22,7 @@ type Book {
     link: String
 }
 
-//Auth type returns after successful login/signup
+#Auth type returns after successful login/signup
 
 type Auth {
     token: ID!
