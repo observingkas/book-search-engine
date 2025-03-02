@@ -11,6 +11,18 @@ import { dirname } from "path";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+const fs = require("fs");
+
+console.log("Current directory:", __dirname);
+console.log(
+  "Parent directory contents:",
+  fs.readdirSync(path.join(__dirname, "../.."))
+);
+console.log(
+  "Project root contents:",
+  fs.readdirSync(path.join(__dirname, "../../.."))
+);
+
 console.log("Current directory:", __dirname);
 console.log(
   "Looking for files in:",
@@ -45,13 +57,9 @@ const startApolloServer = () => {
 
     //Serve up static assets in production
     if (process.env.NODE_ENV === "production") {
-      app.use(
-        express.static(path.join(__dirname, "../../../Develop/client/dist"))
-      );
+      app.use(express.static(path.join(__dirname, "../../client/dist")));
       app.get("*", (_req, res) => {
-        res.sendFile(
-          path.join(__dirname, "../../../Develop/client/dist/index.html")
-        );
+        res.sendFile(path.join(__dirname, "../../client/dist/index.html"));
       });
     }
 
