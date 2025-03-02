@@ -44,6 +44,7 @@ const startApolloServer = () => {
       app.get("*", (_req, res) => {
         res.sendFile(path.join(__dirname, "../../../client/dist/index.html"));
       });
+    }
 
     //Start server on port 3001
     db.once("open", () => {
