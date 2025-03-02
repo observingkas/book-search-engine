@@ -35,7 +35,7 @@ type Query {
     me: User 
 }
 
-//Book input type for saving new books
+#Book input type for saving new books
 
 input BookInput {
     bookId: String!
@@ -46,7 +46,7 @@ input BookInput {
     link: String
 }
 
-//Mutation type defines the available mutations
+#Mutation type defines the available mutations
 
 type Mutation {
     login(email: String!, password: String!): Auth
