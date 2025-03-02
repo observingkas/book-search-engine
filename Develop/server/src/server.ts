@@ -7,27 +7,23 @@ import db from "./config/connection.js";
 import { typeDefs, resolvers } from "./schemas/index.js";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import { readdir } from "fs/promises";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const fs = require("fs");
-
 console.log("Current directory:", __dirname);
-console.log(
-  "Parent directory contents:",
-  fs.readdirSync(path.join(__dirname, "../.."))
-);
-console.log(
-  "Project root contents:",
-  fs.readdirSync(path.join(__dirname, "../../.."))
-);
 
-console.log("Current directory:", __dirname);
-console.log(
-  "Looking for files in:",
-  path.join(__dirname, "../../../Develop/client/dist")
-);
+// Directory logging
+try {
+  const parentDirContents = await readdir(path.join(__dirname, "../.."));
+  console.log("Parent directory contents:", parentDirContents);
+
+  const rootContents = await readdir(path.join(__dirname, "../../.."));
+  console.log("Project root contents:", rootContents);
+} catch (error) {
+  console.log("Error reading directories:", error);
+}
 
 //Create a new express server and define port
 const PORT = process.env.PORT || 3001;
@@ -40,35 +36,39 @@ const server = new ApolloServer({
 });
 
 //Start Apollo server and apply middleware
-const startApolloServer = () => {
-  server.start().then(() => {
-    app.use(express.urlencoded({ extended: true }));
-    app.use(express.json());
+const startApolloServer = async () => {
+  await server.start();
 
-    //Apply Apollo Server middleware with authentication
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
+
+  //Apply Apollo Server middleware with authentication
+  app.use(
+    "/graphql",
+    expressMiddleware(server, {
+      context: async ({ req }) => ({
+        user: req.user,
+      }),
+    })
+  );
+
+  //Serve up static assets in production
+  if (process.env.NODE_ENV === "production") {
     app.use(
-      "/graphql",
-      expressMiddleware(server, {
-        context: async ({ req }) => ({
-          user: req.user,
-        }),
-      })
+      express.static(path.join(__dirname, "../../../Develop/client/dist"))
     );
+    app.get("*", (_req, res) => {
+      res.sendFile(
+        path.join(__dirname, "../../../Develop/client/dist/index.html")
+      );
+    });
+  }
 
-    //Serve up static assets in production
-    if (process.env.NODE_ENV === "production") {
-      app.use(express.static(path.join(__dirname, "../../client/dist")));
-      app.get("*", (_req, res) => {
-        res.sendFile(path.join(__dirname, "../../client/dist/index.html"));
-      });
-    }
-
-    //Start server on port 3001
-    db.once("open", () => {
-      app.listen(PORT, () => {
-        console.log(`🌍 Now listening on localhost:${PORT}`);
-        console.log(`🚀Use GraphQL at http://localhost:${PORT}/graphql`);
-      });
+  //Start server on port 3001
+  db.once("open", () => {
+    app.listen(PORT, () => {
+      console.log(`🌍 Now listening on localhost:${PORT}`);
+      console.log(`🚀Use GraphQL at http://localhost:${PORT}/graphql`);
     });
   });
 };
