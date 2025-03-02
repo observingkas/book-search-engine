@@ -29,7 +29,7 @@ type Auth {
     user: User
 }
 
-//Query type defines the available queries, returns the currently logged-in user
+#Query type defines the available queries, returns the currently logged-in user
 
 type Query {
     me: User 
